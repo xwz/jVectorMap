@@ -7,7 +7,7 @@
  */
 (function( $ ){
     
-	var apiEvents = 
+    var apiEvents = 
     {
         onInit:         'init',
         onZoomIn:       'zoomin',
@@ -15,13 +15,13 @@
         onRegionOver:   'regionmouseover',
         onRegionOut:    'regionmouseout',
         onRegionClick:  'regionclick'
-	};
-	
+    };
+    
     $.fn.vectorMap = function(options) 
     {
         var config = 
         {
-			map: 'world',
+            map: 'world',
             style: {
                 backgroundColor: '#EFF7FD', 
                 strokeColor: '#006CAC', 
@@ -29,7 +29,7 @@
                 strokeWidth: 0.4
             },
             container: this
-		};
+        };
         if (options === 'addMap') 
         {
             WorldMap.maps[arguments[1]] = arguments[2];
@@ -38,69 +38,69 @@
         else if (typeof(options) === 'string' && config.style[arguments[0]]) 
         {
             var method = 'set'+arguments[0].charAt(0).toUpperCase()+arguments[0].substr(1);
-			this.data('mapObject')[method].apply(this.data('mapObject'), Array.prototype.slice.call(arguments, 1));
+            this.data('mapObject')[method].apply(this.data('mapObject'), Array.prototype.slice.call(arguments, 1));
         } 
         else
         {
             $.extend(true,config, options);
             this.css({position: 'relative', overflow: 'hidden' });
-	    	for (var e in apiEvents) 
+            for (var e in apiEvents) 
             {
-			    if (config[e]) 
+                if (config[e]) 
                 {   
-				    this.bind(apiEvents[e]+'.jvectormap', config[e]);
-			    }
-		    } 
-			var map = new WorldMap(config);
+                    this.bind(apiEvents[e]+'.jvectormap', config[e]);
+                }
+            } 
+            var map = new WorldMap(config);
             this.data('mapObject', map);
         }
     };
     
     var VectorCanvas = function(width, height) 
     {
-		this.mode = window.SVGAngle ? 'svg' : 'vml';
-		if (this.mode == 'svg') 
+        this.mode = window.SVGAngle ? 'svg' : 'vml';
+        if (this.mode == 'svg') 
         {
-			this.createSvgNode = function(nodeName) 
+            this.createSvgNode = function(nodeName) 
             {
-				return document.createElementNS(this.svgns, nodeName);
-			}
-		} 
+                return document.createElementNS(this.svgns, nodeName);
+            }
+        } 
         else 
         {
-			try 
+            try 
             {
-				if (!document.namespaces.rvml) 
+                if (!document.namespaces.rvml) 
                 {
-					document.namespaces.add("rvml","urn:schemas-microsoft-com:vml");
-				}
-				this.createVmlNode = function (tagName) 
+                    document.namespaces.add("rvml","urn:schemas-microsoft-com:vml");
+                }
+                this.createVmlNode = function (tagName) 
                 {
-					return document.createElement('<rvml:' + tagName + ' class="rvml">');
-				};
-			} 
+                    return document.createElement('<rvml:' + tagName + ' class="rvml">');
+                };
+            } 
             catch (e) 
             {
-				this.createVmlNode = function (tagName) 
+                this.createVmlNode = function (tagName) 
                 {
-					return document.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="rvml">');
-				};
-			}
-			document.createStyleSheet().addRule(".rvml", "behavior:url(#default#VML)");
-		}
-		if (this.mode == 'svg') 
+                    return document.createElement('<' + tagName + ' xmlns="urn:schemas-microsoft.com:vml" class="rvml">');
+                };
+            }
+            document.createStyleSheet().addRule(".rvml", "behavior:url(#default#VML)");
+        }
+        if (this.mode == 'svg') 
         {
-			this.canvas = this.createSvgNode('svg');
-		} 
+            this.canvas = this.createSvgNode('svg');
+        } 
         else 
         {
-			this.canvas = this.createVmlNode('group');
-			this.canvas.style.position = 'absolute';
-		}
-		this.setSize(width, height);
+            this.canvas = this.createVmlNode('group');
+            this.canvas.style.position = 'absolute';
+        }
+        this.setSize(width, height);
     }
-	
-	VectorCanvas.prototype = 
+    
+    VectorCanvas.prototype = 
     {
         svgns: "http://www.w3.org/2000/svg",
         mode: 'svg',
@@ -243,132 +243,132 @@
             }
         }
     }
-	
-	VectorCanvas.pathSvgToVml = function(path) 
+    
+    VectorCanvas.pathSvgToVml = function(path) 
     {
-		var result = '';
-		var cx = 0, cy = 0;
-		return path.replace(/([MmLlHhVvCc])((?:-?(?:\d+)?(?:\.\d+)?,?\s?)+)/g, function(segment, letter, coords, index)
+        var result = '';
+        var cx = 0, cy = 0;
+        return path.replace(/([MmLlHhVvCc])((?:-?(?:\d+)?(?:\.\d+)?,?\s?)+)/g, function(segment, letter, coords, index)
         {
-			coords = coords.replace(/(\d)-/g, '$1,-').replace(/\s+/g, ',').split(',');
-			if (!coords[0]) coords.shift();
-			for (var i=0,l=coords.length; i<l; i++) 
+            coords = coords.replace(/(\d)-/g, '$1,-').replace(/\s+/g, ',').split(',');
+            if (!coords[0]) coords.shift();
+            for (var i=0,l=coords.length; i<l; i++) 
             {
-				coords[i] = Math.round(100*coords[i]);
-			}
-			switch (letter) 
+                coords[i] = Math.round(100*coords[i]);
+            }
+            switch (letter) 
             {
-				case 'm':
-					cx += coords[0];
-					cy += coords[1];
-					return 't'+coords.join(',');
-				break;
-				case 'M':
-					cx = coords[0];
-					cy = coords[1];
-					return 'm'+coords.join(',');
-				break;
-				case 'l':
-					cx += coords[0];
-					cy += coords[1];
-					return 'r'+coords.join(',');
-				break;
-				case 'L':
-					cx = coords[0];
-					cy = coords[1];
-					return 'l'+coords.join(',');
-				break;
-				case 'h':
-					cx += coords[0];
-					return 'r'+coords[0]+',0';
-				break;
-				case 'H':
-					cx = coords[0];
-					return 'l'+cx+','+cy;
-				break;
-				case 'v':
-					cy += coords[0];
-					return 'r0,'+coords[0];
-				break;
-				case 'V':
-					cy = coords[0];
-					return 'l'+cx+','+cy;
-				break;
-				case 'c':
-					return 'v'+coords.join(',');
-				break;
-				case 'C':
-					return 'c'+coords.join(',');
-				break;
-			}
-			return '';
-		}).replace(/z/g, 'x');
-	}
+                case 'm':
+                    cx += coords[0];
+                    cy += coords[1];
+                    return 't'+coords.join(',');
+                break;
+                case 'M':
+                    cx = coords[0];
+                    cy = coords[1];
+                    return 'm'+coords.join(',');
+                break;
+                case 'l':
+                    cx += coords[0];
+                    cy += coords[1];
+                    return 'r'+coords.join(',');
+                break;
+                case 'L':
+                    cx = coords[0];
+                    cy = coords[1];
+                    return 'l'+coords.join(',');
+                break;
+                case 'h':
+                    cx += coords[0];
+                    return 'r'+coords[0]+',0';
+                break;
+                case 'H':
+                    cx = coords[0];
+                    return 'l'+cx+','+cy;
+                break;
+                case 'v':
+                    cy += coords[0];
+                    return 'r0,'+coords[0];
+                break;
+                case 'V':
+                    cy = coords[0];
+                    return 'l'+cx+','+cy;
+                break;
+                case 'c':
+                    return 'v'+coords.join(',');
+                break;
+                case 'C':
+                    return 'c'+coords.join(',');
+                break;
+            }
+            return '';
+        }).replace(/z/g, 'x');
+    }
     
     var WorldMap = function(params) 
     {
-		var map = this;
-		var mapData = WorldMap.maps[params.map];
-		
-		this.container = params.container;
-		
-		this.defaultWidth = mapData.width;
-		this.defaultHeight = mapData.height;
-		
-		this.style = params.style;
-		this.setBackgroundColor(this.style.backgroundColor);
-		
-		this.width = params.container.width();
-		this.height = params.container.height();
-		
-		this.resize();
+        var map = this;
+        var mapData = WorldMap.maps[params.map];
+        
+        this.container = params.container;
+        
+        this.defaultWidth = mapData.width;
+        this.defaultHeight = mapData.height;
+        
+        this.style = params.style;
+        this.setBackgroundColor(this.style.backgroundColor);
+        
+        this.width = params.container.width();
+        this.height = params.container.height();
+        
+        this.resize();
 
-		$(window).resize(function()
+        $(window).resize(function()
         {
-			map.width = params.container.width();
-			map.height = params.container.height();
-			map.resize();
-			map.canvas.setSize(map.width, map.height);
-			map.applyTransform();
-		});
-		
-		this.canvas = new VectorCanvas(this.width, this.height);
-		params.container.append(this.canvas.canvas);
-		
-		this.makeDraggable();
-		
-		this.rootGroup = this.canvas.createGroup(true);
-		
-		this.index = WorldMap.mapIndex;
-		$('<div/>').addClass('jvectormap-zoomin').text('+').appendTo(params.container);
-		$('<div/>').addClass('jvectormap-zoomout').html('&#x2212;').appendTo(params.container);
+            map.width = params.container.width();
+            map.height = params.container.height();
+            map.resize();
+            map.canvas.setSize(map.width, map.height);
+            map.applyTransform();
+        });
+        
+        this.canvas = new VectorCanvas(this.width, this.height);
+        params.container.append(this.canvas.canvas);
+        
+        this.makeDraggable();
+        
+        this.rootGroup = this.canvas.createGroup(true);
+        
+        this.index = WorldMap.mapIndex;
+        $('<div/>').addClass('jvectormap-zoomin').text('+').appendTo(params.container);
+        $('<div/>').addClass('jvectormap-zoomout').html('&#x2212;').appendTo(params.container);
 
-		for(var key in mapData.paths) 
+        for(var key in mapData.paths) 
         {
-			var path = this.canvas.createPath({path: mapData.paths[key]});
-			path.setFillColor(this.style.fillColor);
+            var path = this.canvas.createPath({path: mapData.paths[key]});
+            path.setFillColor(this.style.fillColor);
             path.setStrokeColor(this.style.strokeColor);
             path.setStrokeWidth(this.style.strokeWidth);
-			path.id = 'jvectormap'+map.index+'_'+key;
-			this.countries[key] = path;
-			$(this.rootGroup).append(path);
-		}
+            path.id = 'jvectormap'+map.index+'_'+key;
+            this.countries[key] = path;
+            $(this.rootGroup).append(path);
+        }
 
         $(params.container).delegate(this.canvas.mode == 'svg' ? 'path' : 'shape', 'mouseover mouseout click', function(e)
         {
-		    var country = e.target.id.split('_').pop();
+            var country = e.target.id.split('_').pop();
             $(params.container).trigger('region'+e.type, [map, country]);
-		});
+        });
 
         $(params.container).trigger('init', [map]);
-		
-		this.canvas.canvas.appendChild(this.rootGroup);		
-		this.applyTransform();
-        this.bindZoomButtons();	
-		WorldMap.mapIndex++;
-	}
-	
-	WorldMap.prototype = 
+        
+        this.canvas.canvas.appendChild(this.rootGroup);     
+        this.applyTransform();
+        this.bindZoomButtons(); 
+        WorldMap.mapIndex++;
+    }
+    
+    WorldMap.prototype = 
     {
         transX: 0,
         transY: 0,
@@ -384,11 +384,11 @@
         zoomMaxStep: 4,
         zoomCurStep: 1,
         
-		setBackgroundColor: function(backgroundColor) 
+        setBackgroundColor: function(backgroundColor) 
         {
-			this.container.css('background-color', backgroundColor);
-		},
-	
+            this.container.css('background-color', backgroundColor);
+        },
+    
         setStrokeWidth: function(width) 
         {
             this.foreachCountry('setStrokeWidth', width);
@@ -421,7 +421,7 @@
                 }
             }
         },        
-	
+    
         resize: function() 
         {
             var curBaseScale = this.baseScale;
@@ -573,8 +573,8 @@
             this.scale = scale;
             this.applyTransform();
         }
-    }	
-	WorldMap.xlink = "http://www.w3.org/1999/xlink";
-	WorldMap.mapIndex = 1;
+    }   
+    WorldMap.xlink = "http://www.w3.org/1999/xlink";
+    WorldMap.mapIndex = 1;
     WorldMap.maps = {};
 })( jQuery );

@@ -1,1 +1,55 @@
-My Github page
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Vector Map</title>
+        <style>
+            #map
+            {
+                height: 500px;
+                cursor: url(https://raw.github.com/xwz/jVectorMap/master/closedhand.cur), default;
+            }
+
+            #map.grabbing
+            {
+                cursor: url(https://raw.github.com/xwz/jVectorMap/master/openhand.cur), default;
+            }
+            .jvectormap-zoomin, .jvectormap-zoomout 
+            {
+                position: absolute;
+                -moz-border-radius: 3px;
+                border-radius:3px;
+                background: #292929;
+                padding: 3px;
+                color: white;
+                width: 10px;
+                height: 10px;
+                cursor: pointer;
+                line-height: 10px;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .jvectormap-zoomin 
+            {
+                left: 10px;
+                top: 10px;
+            }
+
+            .jvectormap-zoomout 
+            {
+                left: 10px;
+                top: 30px;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="map"></div>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script> 
+        <script src="https://raw.github.com/xwz/jVectorMap/master/jquery.vector-map.js"></script> 
+        <script src="https://raw.github.com/xwz/jVectorMap/master/world.js"></script>
+        <script>
+            $('#map').vectorMap();
+        </script>
+    </body>
+</html>
